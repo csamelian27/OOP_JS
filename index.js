@@ -82,19 +82,28 @@ const circle1 = new Circle1(1)
 
 // Abstraction - hide details & complexity and show or expose only the essentials
 // We should hide defaultLocation & computeOptimumLocation cause they are implementation details that consumers don't need
-// They only need access to radius & draw 
+// They only need access to radius & draw
 function Circle3(radius) {
   this.radius = radius;
-  this.defaultLocation = { x: 0, y: 0 };
-  this.computeOptimumLocation = function() {
-    // ...
-  }
+  let defaultLocation = { x: 0, y: 0 };
   this.draw = function() {
-    this.computeOptimumLocation();
     console.log('draw');
   }
+
+  Object.defineProperty(this, 'defaultLocation', {
+    get: function() {
+      return defaultLocation;
+    },
+    set: function(value) {
+      // can perform validations inside of here
+      if (!value.x || !value.y) {
+        throw new Error('Invalid location.')
+      }
+      defaultLocation = value;
+    }
+  })
 }
 
 const circle3 = new Circle3(10)
-circle3.computeOptimumLocation()
+circle3.defaultLocation
 circle3.draw()
